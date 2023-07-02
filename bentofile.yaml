@@ -1,0 +1,8 @@
+service: "service.py:svc" # Same as the argument passed to `bentoml serve`
+labels:
+  owner: mlops
+  stage: dev
+include:
+  - "*.py"
+python:
+  requirements_txt: ./requirements/base.txt
