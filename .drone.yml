@@ -42,6 +42,15 @@ steps:
       - pip install -r requirements/base.txt
       - bentoml containerize -t logi_clf:latest logi_clf:latest
 
+  - name: deploy-model
+    image: 10446005/py311dind:latest
+    volumes:
+      - name: dockersock
+        path: /var/run/docker.sock
+    commands:
+      - docker compose up -d
+      - docker compose ps
+
 trigger:
   branch:
     - main
