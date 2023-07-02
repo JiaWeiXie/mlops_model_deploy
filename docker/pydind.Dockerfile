@@ -6,6 +6,7 @@ RUN export DEBIAN_FRONTEND=noninteractive && \
     apt-utils \
     lsb-release \
     ca-certificates \
+    build-essential \
     gnupg2 \
     curl
 

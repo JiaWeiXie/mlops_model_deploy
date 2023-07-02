@@ -9,7 +9,7 @@ platform:
 
 steps:
   - name: import-model
-    image: python:3.11.3-slim
+    image: container_registry:5000/py311dind:latest
     environment:
       MLFLOW_MODEL_URI:
         from_secret: MLFLOW_MODEL_URI
@@ -25,7 +25,6 @@ steps:
       - name: models
         path: /root/bentoml
     commands:
-      - apt-get install build-essential
       - pip install -r requirements/base.txt
       - python import_model.py
       - bentoml models list
