@@ -25,6 +25,7 @@ steps:
       - name: models
         path: /root/bentoml
     commands:
+      - apt-get install build-essential
       - pip install -r requirements/base.txt
       - python import_model.py
       - bentoml models list
