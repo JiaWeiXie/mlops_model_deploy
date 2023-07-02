@@ -9,7 +9,7 @@ platform:
 
 steps:
   - name: import-model
-    image: py311dind:latest
+    image: host.docker.internal:5000/py311dind:latest
     environment:
       MLFLOW_MODEL_URI:
         from_secret: MLFLOW_MODEL_URI
@@ -32,7 +32,7 @@ steps:
       - bentoml list
 
   - name: build-model
-    image: py311dind:latest
+    image: host.docker.internal:5000/py311dind:latest
     volumes:
       - name: dockersock
         path: /var/run/docker.sock

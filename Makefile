@@ -46,15 +46,9 @@ py-dind-build: docker/pydind.Dockerfile  ## Build docker image
 	docker build \
 		-f $^ \
 		--tag py311dind:$(CURRENT_BRANCH) \
-		--tag py311dind:latest .
+		--tag py311dind:latest \
+		--tag localhost:5000/py311dind:latest .
 .PHONY: py-dind-build
-
-py-dind-tag:
-	docker image tag \
-		py311dind:latest \
-		localhost:5000/py311dind:latest
-.PHONY: py-dind-tag
-
 
 py-dind-push:
 	docker image push \
