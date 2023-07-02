@@ -1,0 +1,60 @@
+---
+kind: pipeline
+type: docker
+name: default
+
+platform:
+  os: linux
+  arch: arm64
+
+steps:
+  - name: import-model
+    image: python:3.11.3-slim
+    environment:
+      MLFLOW_MODEL_URI:
+        from_secret: MLFLOW_MODEL_URI
+      MLFLOW_TRACKING_URL:
+        from_secret: MLFLOW_TRACKING_URL
+      MLFLOW_S3_ENDPOINT_URL:
+        from_secret: MLFLOW_S3_ENDPOINT_URL
+      AWS_ACCESS_KEY_ID:
+        from_secret: AWS_ACCESS_KEY_ID
+      AWS_SECRET_ACCESS_KEY:
+        from_secret: AWS_SECRET_ACCESS_KEY
+    volumes:
+      - name: models
+        path: /root/bentoml
+    commands:
+      - pip install -r requirements/base.txt
+      - python import_model.py
+      - bentoml models list
+      - bentoml build --verbose
+      - bentoml list
+
+  - name: build-model
+    image: container_registry:5000/py311dind:latest
+    privileged: true
+    volumes:
+      - name: dockersock
+        path: /var/run/docker.sock
+      - name: models
+        path: /root/bentoml
+    commands:
+      - pip install -r requirements/base.txt
+      - bentoml containerize -t logi_clf:latest logi_clf:latest
+
+trigger:
+  branch:
+    - main
+  event:
+    - push
+    - pull_request
+    - custom
+
+volumes:
+  - name: models
+    host:
+      path: /var/drone/build/model
+  - name: dockersock
+    host:
+      path: /var/run/docker.sock
