@@ -52,7 +52,7 @@ steps:
         path: /var/run/docker.sock
     commands:
       - docker rm -f logi_clf_model
-      - docker run -it -p ${MODEL_SERVE_PORT}:3000 -d --name logi_clf_model logi_clf:latest serve
+      - docker run -it -p $MODEL_SERVE_PORT:3000 -d --name logi_clf_model logi_clf:latest serve
 
 trigger:
   branch:
