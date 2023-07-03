@@ -44,19 +44,21 @@ steps:
 
   - name: deploy-model
     image: 10446005/py311dind:latest
+    environment:
+      MODEL_SERVE_PORT:
+        from_secret: MODEL_SERVE_PORT
     volumes:
       - name: dockersock
         path: /var/run/docker.sock
     commands:
       - docker rm -f logi_clf_model
-      - docker run -it -p 3030:3030 -d --name logi_clf_model logi_clf:latest serve
+      - docker run -it -p ${MODEL_SERVE_PORT}:3000 -d --name logi_clf_model logi_clf:latest serve
 
 trigger:
   branch:
     - main
   event:
     - push
-    - pull_request
     - custom
 
 volumes:
