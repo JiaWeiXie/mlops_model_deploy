@@ -1,0 +1,32 @@
+---
+kind: pipeline
+type: docker
+name: default
+
+steps:
+  - name: import-model  # 匯入模型到 BentoML 中
+    image: localhost/py311dind:latest
+    environment: ...
+    volumes: ...
+    commands:
+      - pip install -r requirements/base.txt  # 安裝必要套件
+      - python import_model.py  # 執行轉換腳本
+      - bentoml models list  # 瀏覽匯入結果
+      - bentoml build --verbose  # 執行模型應用程式封裝 
+      - bentoml list  # 瀏覽模型封裝結果
+
+  - name: build-model  # 建置模型
+    image: localhost/py311dind:latest
+    volumes: ...
+    commands:  # 安裝必要套件，將封裝後的模型進行容器映像檔建置
+      - pip install -r requirements/base.txt
+      - bentoml containerize -t logi_clf:latest logi_clf:latest
+
+  - name: deploy-model  # 部署模型
+    image: localhost/py311dind:latest
+    environment: ...
+    volumes: ...
+    commands:  # 移除原有容器服務，執行新的模型應用程式容器
+      - docker rm -f logi_clf_model
+      - docker run -it -p $MODEL_SERVE_PORT:3000 -d
+      			--name logi_clf_model logi_clf:latest serve
